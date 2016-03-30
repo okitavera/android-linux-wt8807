@@ -134,6 +134,12 @@ config CPU_FREQ_DEFAULT_GOV_DARKNESS
 	  frequency lookup tables and optimized scaling triggers instead of
 	  % frequency steps to get smooth up/downscaling dependant on CPU load.
 
+config CPU_FREQ_DEFAULT_GOV_BLUACTIVE
+	bool "bluactive"
+	select CPU_FREQ_GOV_BLUACTIVE
+	help
+	Use the CPUFreq governor 'bluactive' as default.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -259,6 +265,12 @@ config CPU_FREQ_GOV_DARKNESS
 	  For details, take a look at <file:Documentation/cpu-freq/>.
 
 	  If in doubt, say Y.
+
+config CPU_FREQ_GOV_BLUACTIVE
+	tristate "'bluactive' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'bluactive' - less aggressive version of interactive
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
