@@ -8,7 +8,7 @@
 # quit from this : 
 #    $ detroy-env
 
-export UVERSION=X1.1-2
+export UVERSION=X1.1-2-H20
 
 BASEPATH=$HOME/android
 SRC=$BASEPATH/kernel/android_kernel_cyanogen_msm8916-sid
@@ -26,12 +26,12 @@ source $SRC/.env/bin/activate
 
 export USE_CCACHE=1
 export ARCH=arm
-export CROSS_COMPILE=$TCHAIN/LinaroMod-arm-eabi-4.9/bin/arm-eabi-
-export PS1="(UX-chan sibuk) $OLD_PS1"
+export CROSS_COMPILE=$TCHAIN/hyperLinaro-arm-eabi-5.1/bin/arm-eabi-
+export PS1="(cross_compile) $OLD_PS1"
 
 umk(){
-	export LOCALVERSION="-UNDINE-$UVERSION"
-	export ZIPYCHAN_NAME=codeharuka_UNDINE-$UVERSION
+	export LOCALVERSION="-Undine-$UVERSION"
+	export ZIPYCHAN_NAME=Codeharuka_Undine-$UVERSION
 
 	if  [[ $1 == "clean" ]]; then
 		make O=$OUT clean
