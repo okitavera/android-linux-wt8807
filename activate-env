@@ -29,7 +29,7 @@ export PS1="(UX-chan sibuk) \W \$ "
 ciharu(){
 	if  [[ $1 == "clean" ]]; then
 		make O=$OUT clean
-		make O=$OUT mrproper
+#		make O=$OUT mrproper
 	elif [[ $1 == "push" ]]; then
 		make O=$OUT $ACTIVECONF
 	elif [[ $1 == "edit" ]]; then
