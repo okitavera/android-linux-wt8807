@@ -153,7 +153,9 @@ static void ex_check_cpu(int cpu, unsigned int load)
 	struct ex_dbs_tuners *ex_tuners = dbs_data->tuners;
 	unsigned int max_load_freq = 0, freq_next = 0;
 	unsigned int j, avg_load, cur_freq, max_freq, target_freq = 0;
-
+	
+	cpufreq_notify_utilization(policy, load);
+	
 	cur_freq = policy->cur;
 	max_freq = policy->max;
 
