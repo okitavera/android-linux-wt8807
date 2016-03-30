@@ -8,12 +8,15 @@
 # quit from this : 
 #    $ detroy-env
 
+export UVERSION=X1.1-2
+
 BASEPATH=$HOME/android
 SRC=$BASEPATH/kernel/android_kernel_cyanogen_msm8916-sid
-OUT=$SRC/~out
+OUT=$SRC/.out
 TOOLS=$BASEPATH/harukachan
 PKG=$TOOLS/zipychan
 ACTIVECONF=haruka_wt88047_defconfig
+TCHAIN=$BASEPATH/harukachan/toolchain
 
 export OLD_PS1=$PS1
 cd $SRC/
@@ -23,13 +26,12 @@ source $SRC/.env/bin/activate
 
 export USE_CCACHE=1
 export ARCH=arm
-export CROSS_COMPILE=$TOOLS/arm-eabi-4.9-ubertc/bin/arm-eabi-
-export PS1="(UX-chan sibuk) \W \$ "
+export CROSS_COMPILE=$TCHAIN/LinaroMod-arm-eabi-4.9/bin/arm-eabi-
+export PS1="(UX-chan sibuk) $OLD_PS1"
 
-ciharu(){
-	MY_COMMIT_COUNT=`cat $SRC/.git/logs/refs/heads/cm-13.0-wt88047 | grep commit | grep Haruka | wc -l`
-	LV="-X1$MY_COMMIT_COUNT-codeharuka"
-	export ZIPYCHAN_NAME=UndineXtreme_X1$MY_COMMIT_COUNT-codeharuka
+umk(){
+	export LOCALVERSION="-UNDINE-$UVERSION"
+	export ZIPYCHAN_NAME=codeharuka_UNDINE-$UVERSION
 
 	if  [[ $1 == "clean" ]]; then
 		make O=$OUT clean
@@ -38,7 +40,7 @@ ciharu(){
 	elif [[ $1 == "edit" ]]; then
 		make O=$OUT nconfig
 	elif [[ $1 == "now" ]]; then
-		time make O=$OUT LOCALVERSION=$LV -j3
+		time make O=$OUT -j3
 		[[ -f $OUT/arch/arm/boot/dtImage ]] && rm -v $OUT/arch/arm/boot/dtImage
 		dtbToolCM -o $OUT/arch/arm/boot/dtImage -s 2048 -p $OUT/scripts/dtc/ $OUT/arch/arm/boot/
 	elif [[ $1 == "dtbonly" ]]; then
