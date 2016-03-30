@@ -1,0 +1,66 @@
+#!/bin/bash
+# UX-env
+# This is virtual environment like chroot.
+# For easy managing and wrapping python2 (because archlinux use python3 as default /bin/python) 
+# with no any conflict at one terminal session.
+# usage : 
+#    $ source activate-env
+# quit from this : 
+#    $ detroy-env
+
+BASEPATH=$HOME/android
+SRC=$BASEPATH/kernel/android_kernel_cyanogen_msm8916-sid
+OUT=$SRC/~out
+TOOLS=$BASEPATH/harukachan
+PKG=$TOOLS/zipychan
+ACTIVECONF=haruka_wt88047_defconfig
+
+export OLD_PS1=$PS1
+cd $SRC/
+[[ ! -d $SRC/.env ]] && virtualenv2 $SRC/.env
+
+source $SRC/.env/bin/activate
+
+export USE_CCACHE=1
+export ARCH=arm
+export CROSS_COMPILE=$TOOLS/arm-eabi-4.9-ubertc/bin/arm-eabi-
+export PS1="(UX-chan sibuk) \W \$ "
+
+ciharu(){
+	if  [[ $1 == "clean" ]]; then
+		make O=$OUT clean
+		make O=$OUT mrproper
+	elif [[ $1 == "push" ]]; then
+		make O=$OUT $ACTIVECONF
+	elif [[ $1 == "edit" ]]; then
+		make O=$OUT nconfig
+	elif [[ $1 == "now" ]]; then
+		time make O=$OUT -j3
+		[[ -f $OUT/arch/arm/boot/dtImage ]] && rm -v $OUT/arch/arm/boot/dtImage
+		dtbToolCM -o $OUT/arch/arm/boot/dtImage -s 2048 -p $OUT/scripts/dtc/ $OUT/arch/arm/boot/
+	elif [[ $1 == "dtbonly" ]]; then
+		[[ -f $OUT/arch/arm/boot/dtImage ]] && rm -v $OUT/arch/arm/boot/dtImage
+		dtbToolCM -o $OUT/arch/arm/boot/dtImage -s 2048 -p $OUT/scripts/dtc/ $OUT/arch/arm/boot/
+	elif [[ $1 == "zip" ]]; then
+		pushd $PKG
+			make zip
+		popd
+	elif [[ $1 == "sideload" ]]; then
+		pushd $PKG
+			make sideload
+		popd
+	elif [[ $1 == "twrp" ]]; then
+		adb reboot recovery
+	else
+		echo "UX-env v9999999 Ayy lmao."
+	fi
+}
+destroy-env() {
+	unset ARCH
+	unset CROSS_COMPILE
+	export PS1=$OLD_PS1
+	unset OLD_PS1
+	unset -f ciharu
+	unset -f destroy-env
+	deactivate
+}
