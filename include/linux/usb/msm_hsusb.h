@@ -105,9 +105,11 @@ enum msm_usb_phy_type {
 };
 
 #ifdef CONFIG_MACH_WT88047
-#define IDEV_CHG_MAX	1050
+#define IDEV_CHG_MAX		1050
+#define IDEV_CHG_MAX_FAST	1500
 #else
-#define IDEV_CHG_MAX	1500
+#define IDEV_CHG_MAX		1500
+#define IDEV_CHG_MAX_FAST	1500
 #endif
 #define IDEV_CHG_MIN	500
 #define IUNIT		100
