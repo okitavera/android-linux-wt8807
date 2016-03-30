@@ -27,15 +27,18 @@ export CROSS_COMPILE=$TOOLS/arm-eabi-4.9-ubertc/bin/arm-eabi-
 export PS1="(UX-chan sibuk) \W \$ "
 
 ciharu(){
+	MY_COMMIT_COUNT=`cat $SRC/.git/logs/refs/heads/cm-13.0-wt88047 | grep commit | grep Haruka | wc -l`
+	LV="-X1$MY_COMMIT_COUNT-codeharuka"
+	export ZIPYCHAN_NAME=UndineXtreme_X1$MY_COMMIT_COUNT-codeharuka
+
 	if  [[ $1 == "clean" ]]; then
 		make O=$OUT clean
-#		make O=$OUT mrproper
 	elif [[ $1 == "push" ]]; then
 		make O=$OUT $ACTIVECONF
 	elif [[ $1 == "edit" ]]; then
 		make O=$OUT nconfig
 	elif [[ $1 == "now" ]]; then
-		time make O=$OUT -j3
+		time make O=$OUT LOCALVERSION=$LV -j3
 		[[ -f $OUT/arch/arm/boot/dtImage ]] && rm -v $OUT/arch/arm/boot/dtImage
 		dtbToolCM -o $OUT/arch/arm/boot/dtImage -s 2048 -p $OUT/scripts/dtc/ $OUT/arch/arm/boot/
 	elif [[ $1 == "dtbonly" ]]; then
