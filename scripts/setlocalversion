@@ -37,6 +37,8 @@ scm_version()
 	if test -e .scmversion; then
 		cat .scmversion
 		return
+	else
+		touch .scmversion
 	fi
 	if test "$1" = "--short"; then
 		short=true
