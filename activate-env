@@ -8,10 +8,10 @@
 # quit from this : 
 #    $ detroy-env
 
-export UVERSION=X1.1-2-H20
+export UVERSION=X1.1-4-H2O
 
 BASEPATH=$HOME/android
-SRC=$BASEPATH/kernel/android_kernel_cyanogen_msm8916-sid
+SRC=$BASEPATH/kernel/UndineH2O_XR2
 OUT=$SRC/.out
 TOOLS=$BASEPATH/harukachan
 PKG=$TOOLS/Zipychan2
@@ -28,6 +28,8 @@ export USE_CCACHE=1
 export ARCH=arm
 export CROSS_COMPILE=$TCHAIN/hyperLinaro-arm-eabi-5.1/bin/arm-eabi-
 export PS1="(cross_compile) $OLD_PS1"
+export KBUILD_BUILD_HOST="codeharuka"
+export KBUILD_BUILD_USER="yusa"
 
 umk(){
 	export LOCALVERSION="-Undine-$UVERSION"
@@ -52,9 +54,13 @@ umk(){
 		pushd $PKG
 			make zip
 		popd
-	elif [[ $1 == "sideload" ]]; then
+	elif [[ $1 == "sdload" ]]; then
 		pushd $PKG
 			make sideload
+		popd
+	elif [[ $1 == "snd" ]]; then
+		pushd $PKG
+			make send
 		popd
 	elif [[ $1 == "twrp" ]]; then
 		adb reboot recovery
@@ -67,7 +73,7 @@ destroy-env() {
 	unset CROSS_COMPILE
 	export PS1=$OLD_PS1
 	unset OLD_PS1
-	unset -f ciharu
+	unset -f umk
 	unset -f destroy-env
 	deactivate
 }
