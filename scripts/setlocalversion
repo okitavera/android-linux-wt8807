@@ -39,6 +39,7 @@ scm_version()
 		return
 	else
 		touch .scmversion
+		return
 	fi
 	if test "$1" = "--short"; then
 		short=true
