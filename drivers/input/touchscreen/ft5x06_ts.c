@@ -663,6 +663,36 @@ static int ft5x06_report_gesture(struct i2c_client *i2c_client,
 }
 #endif
 
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+
+static int dt2w_panel_mode(struct device *dev, char *mode)
+{
+	struct ft5x06_ts_data *data = dev_get_drvdata(dev);
+	char txbuf[2];
+
+	txbuf[0] = FT_REG_PMODE;
+
+	if (!strcmp(mode, "suspend")) {
+		disable_irq(data->client->irq);
+		txbuf[1] = FT_PMODE_MONITOR;
+	} else if (!strcmp(mode, "resume")) {
+		enable_irq(data->client->irq);
+		txbuf[1] = FT_PMODE_ACTIVE;
+	}
+
+	mutex_lock(&data->input_dev->mutex);
+	ft5x06_i2c_write(data->client, txbuf, sizeof(txbuf));
+	mutex_unlock(&data->input_dev->mutex);
+
+	if (!strcmp(mode, "suspend"))
+		enable_irq_wake(data->client->irq);
+	else if (!strcmp(mode, "resume"))
+		disable_irq_wake(data->client->irq);
+
+	return 0;
+}
+#endif
+
 static void ft5x06_update_fw_vendor_id(struct ft5x06_ts_data *data)
 {
 	struct i2c_client *client = data->client;
@@ -1212,18 +1242,11 @@ static int ft5x06_ts_suspend(struct device *dev)
 {
 	struct ft5x06_ts_data *data = dev_get_drvdata(dev);
 	int err;
-	char txbuf[2];
 
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (dt2w_switch > 0) {
-		disable_irq_wake(data->client->irq);
-		mutex_lock(&data->input_dev->mutex);
-		txbuf[0] = FT_REG_PMODE;
-		txbuf[1] = FT_PMODE_MONITOR;
-		ft5x06_i2c_write(data->client, txbuf, sizeof(txbuf));
-		mutex_unlock(&data->input_dev->mutex);
-		return 0;
-	}
+	bool dt2w_check = (dt2w_switch > 0) && (dt2w_scr_suspended == true);
+	if (dt2w_check)
+		return dt2w_panel_mode(dev, "suspend");
 #endif
 
 	if (data->loading_fw) {
@@ -1267,18 +1290,11 @@ static int ft5x06_ts_resume(struct device *dev)
 {
 	struct ft5x06_ts_data *data = dev_get_drvdata(dev);
 	int err;
-	char txbuf[2];
-	
+
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (dt2w_switch > 0) {
-		enable_irq_wake(data->client->irq);
-		mutex_lock(&data->input_dev->mutex);
-		txbuf[0] = FT_REG_PMODE;
-		txbuf[1] = FT_PMODE_ACTIVE;
-		ft5x06_i2c_write(data->client, txbuf, sizeof(txbuf));
-		mutex_unlock(&data->input_dev->mutex);
-		return 0;
-	}
+	bool dt2w_check = (dt2w_switch > 0) && (dt2w_scr_suspended == true);
+	if (dt2w_check)
+		return dt2w_panel_mode(dev, "resume");
 #endif
 
 	if (!data->suspended) {
