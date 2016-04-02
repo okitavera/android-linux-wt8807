@@ -47,6 +47,10 @@
 #define FT_SUSPEND_LEVEL 1
 #endif
 
+#ifdef CONFIG_POWERSUSPEND
+#include <linux/powersuspend.h>
+#endif
+
 #define FT_DRIVER_VERSION	0x02
 
 #define FT_META_REGS		3
@@ -673,10 +677,9 @@ static int dt2w_panel_mode(struct device *dev, char *mode)
 	txbuf[0] = FT_REG_PMODE;
 
 	if (!strcmp(mode, "suspend")) {
-		disable_irq(data->client->irq);
+		disable_irq_wake(data->client->irq);
 		txbuf[1] = FT_PMODE_MONITOR;
-	} else if (!strcmp(mode, "resume")) {
-		enable_irq(data->client->irq);
+	} else {
 		txbuf[1] = FT_PMODE_ACTIVE;
 	}
 
@@ -684,10 +687,8 @@ static int dt2w_panel_mode(struct device *dev, char *mode)
 	ft5x06_i2c_write(data->client, txbuf, sizeof(txbuf));
 	mutex_unlock(&data->input_dev->mutex);
 
-	if (!strcmp(mode, "suspend"))
+	if (!strcmp(mode, "resume"))
 		enable_irq_wake(data->client->irq);
-	else if (!strcmp(mode, "resume"))
-		disable_irq_wake(data->client->irq);
 
 	return 0;
 }
@@ -1244,7 +1245,7 @@ static int ft5x06_ts_suspend(struct device *dev)
 	int err;
 
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	bool dt2w_check = (dt2w_switch > 0) && (dt2w_scr_suspended == true);
+	bool dt2w_check = (dt2w_switch > 0);
 	if (dt2w_check)
 		return dt2w_panel_mode(dev, "suspend");
 #endif
@@ -1292,7 +1293,7 @@ static int ft5x06_ts_resume(struct device *dev)
 	int err;
 
 #ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	bool dt2w_check = (dt2w_switch > 0) && (dt2w_scr_suspended == true);
+	bool dt2w_check = (dt2w_switch > 0);
 	if (dt2w_check)
 		return dt2w_panel_mode(dev, "resume");
 #endif
