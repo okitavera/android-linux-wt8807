@@ -8,7 +8,7 @@
 # quit from this : 
 #    $ detroy-env
 
-export UVERSION=X1.1-4-H2O
+export UVERSION=`cat .uxopt | grep ^v= | cut -d= -f2`
 
 BASEPATH=$HOME/android
 SRC=$BASEPATH/kernel/UndineH2O_XR2
@@ -28,8 +28,8 @@ export USE_CCACHE=1
 export ARCH=arm
 export CROSS_COMPILE=$TCHAIN/hyperLinaro-arm-eabi-5.1/bin/arm-eabi-
 export PS1="(cross_compile) $OLD_PS1"
-export KBUILD_BUILD_HOST="codeharuka"
-export KBUILD_BUILD_USER="yusa"
+export KBUILD_BUILD_HOST=`cat .uxopt | grep ^h= | cut -d= -f2`
+export KBUILD_BUILD_USER=`cat .uxopt | grep ^u= | cut -d= -f2`
 
 umk(){
 	export LOCALVERSION="-Undine-$UVERSION"
