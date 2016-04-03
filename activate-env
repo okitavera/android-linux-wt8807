@@ -9,10 +9,8 @@
 #    $ detroy-env
 
 export OLD_PS1=$PS1
-cd $SRC/
-[[ ! -d $SRC/.env ]] && virtualenv2 $SRC/.env
 
-source $SRC/.env/bin/activate
+source .env/bin/activate
 
 export PS1="(CC) $OLD_PS1"
 
