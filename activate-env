@@ -30,8 +30,8 @@ umk(){
 	export UVERSION=`cat .uxopt | grep ^v= | cut -d= -f2`
 	export KBUILD_BUILD_HOST=`cat .uxopt | grep ^h= | cut -d= -f2`
 	export KBUILD_BUILD_USER=`cat .uxopt | grep ^u= | cut -d= -f2`
-	export LOCALVERSION="-Undine-$UVERSION"
-	export ZIPYCHAN_NAME=Codeharuka_Undine-$UVERSION
+	export LOCALVERSION="$UVERSION"
+	export ZIPYCHAN_NAME=Codeharuka_$UVERSION
 
 	if  [[ $1 == "clean" ]]; then
 		make O=$OUT clean
