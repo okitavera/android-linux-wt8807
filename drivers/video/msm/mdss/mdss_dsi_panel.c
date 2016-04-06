@@ -22,8 +22,8 @@
 #include <linux/qpnp/pwm.h>
 #include <linux/err.h>
 
-#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-#include <linux/input/doubletap2wake.h>
+#ifdef CONFIG_TOUCHSCREEN_ALTERNATIVEWAKE
+#include <linux/input/alternativewake.h>
 #endif
 
 #include "mdss_dsi.h"
@@ -642,9 +642,9 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 end:
 	pinfo->blank_state = MDSS_PANEL_BLANK_UNBLANK;
 	pr_debug("%s:-\n", __func__);
-#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (dt2w_switch > 0) {
-	dt2w_scr_suspended = false;
+#ifdef CONFIG_TOUCHSCREEN_ALTERNATIVEWAKE
+	if (altwake_chk) {
+	scr_suspended = false;
 	}
 #endif
  	return 0;
@@ -713,9 +713,9 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 end:
 	pinfo->blank_state = MDSS_PANEL_BLANK_BLANK;
 	pr_debug("%s:-\n", __func__);
-#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
-	if (dt2w_switch > 0) {
-	dt2w_scr_suspended = true;
+#ifdef CONFIG_TOUCHSCREEN_ALTERNATIVEWAKE
+	if (altwake_chk) {
+	scr_suspended = true;
 	}
 #endif
 	return 0;
