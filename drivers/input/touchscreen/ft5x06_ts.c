@@ -47,10 +47,6 @@
 #define FT_SUSPEND_LEVEL 1
 #endif
 
-#ifdef CONFIG_POWERSUSPEND
-#include <linux/powersuspend.h>
-#endif
-
 #define FT_DRIVER_VERSION	0x02
 
 #define FT_META_REGS		3
@@ -1192,11 +1188,7 @@ static int ft5x06_ts_stop(struct device *dev)
 	if (gpio_is_valid(data->pdata->reset_gpio)) {
 		txbuf[0] = FT_REG_PMODE;
 #ifdef CONFIG_TOUCHSCREEN_ALTERNATIVEWAKE
-	if (altwake_chk) {
-		txbuf[1] = FT_PMODE_MONITOR;
-	} else {
-		txbuf[1] = FT_PMODE_HIBERNATE;
-	}
+		txbuf[1] = (altwake_chk) ? FT_PMODE_MONITOR : FT_PMODE_HIBERNATE;
 #else
 		txbuf[1] = FT_PMODE_HIBERNATE;
 #endif
@@ -1400,7 +1392,7 @@ static int fb_notifier_callback(struct notifier_block *self,
 	if (evdata && evdata->data && event == FB_EVENT_BLANK &&
 			ft5x06_data && ft5x06_data->client) {
 		blank = evdata->data;
-		if (*blank == FB_BLANK_UNBLANK || *blank == FB_BLANK_VSYNC_SUSPEND) { 
+		if (*blank == FB_BLANK_UNBLANK) { 
 			if (unblanked_once)
 				ft5x06_ts_resume(&ft5x06_data->client->dev);
 		} else if (*blank == FB_BLANK_POWERDOWN) {
