@@ -514,9 +514,17 @@ static unsigned int uksm_sleep_jiffies;
 /* Base CPU limit that ratios are scaled against */
 static unsigned int uksm_max_cpu_percentage;
 
-static int uksm_cpu_governor = 2;
+static int uksm_cpu_governor = 1;
 
-static char *uksm_cpu_governor_str[8] = { "full", "medium", "low", "quiet", "arm-full", "arm-medium", "arm-low", "arm-quiet" };
+static char *uksm_cpu_governor_str[8] = { 
+	"arm-full", 
+	"arm-medium", 
+	"arm-low", 
+	"arm-quiet", 
+	"full", 
+	"medium", 
+	"low", 
+	"quiet" };
 
 struct uksm_cpu_preset_s {
 	int cpu_ratio[SCAN_LADDER_SIZE];
@@ -533,20 +541,20 @@ struct uksm_cpu_preset_s {
  *   rate won't scale down as fewer pages are left to scan.
  */
 struct uksm_cpu_preset_s uksm_cpu_preset[8] = {
-	{ {20, 40, -2500, -10000}, {1000, 500, 200, 50}, 95},
-	{ {20, 30, -2500, -10000}, {1000, 500, 400, 100}, 50},
-	{ {10, 20, -5000, -10000}, {1500, 1000, 1000, 250}, 20},
-	{ {10, 20, 40, 75}, {2000, 1000, 1000, 1000}, 1},
 	{ {-5000, -7500, -9000, -10000}, {90000, 500, 200, 100}, 18},
 	{ {-5000, -6000, -7500, -10000}, {120000, 1000, 500, 250}, 12},
 	{ {-5000, -6000, -7500, -10000}, {180000, 2500, 1000, 500}, 7},
 	{ {-2500, -3500, -5000, -10000}, {300000, 4000, 2500, 1500}, 1},
+	{ {20, 40, -2500, -10000}, {1000, 500, 200, 50}, 95},
+	{ {20, 30, -2500, -10000}, {1000, 500, 400, 100}, 50},
+	{ {10, 20, -5000, -10000}, {1500, 1000, 1000, 250}, 20},
+	{ {10, 20, 40, 75}, {2000, 1000, 1000, 1000}, 1},
 };
 
 /* Time per page can vary widely; ema seems to respond much better to the
  * bounded range offered by pages per usec.
  */
-#define UKSM_PAGE_COUNT_DEFAULT	250
+#define UKSM_PAGE_COUNT_DEFAULT	400
 /* Based on task runtime */
 static unsigned long uksm_ema_task_pages = UKSM_PAGE_COUNT_DEFAULT;
 /* Based on wall time */
